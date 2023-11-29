@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +35,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function App() {
+
+function HomeScreen() {
+  return (
+    <View style={styles.container}>
+      <Text>Bem vindo!</Text>
+    </View>
+  );
+}
+
+function LoginScreen ({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -66,7 +77,18 @@ export default function App() {
     }
 
     if (isValid) {
-      console.log(`Email: ${email}, Senha: ${password}`);
+      if (!users.find(user => user.email === email)) {
+        setEmailError('Email não cadastrado');
+        return;
+      } else if (users.find(user => user.email === email && user.password !== password)) {
+        setPasswordError('Senha incorreta');
+        return;
+      } else if (users.find(user => user.email === email && user.password === password)) {
+        console.log(`ENTRADA: Email: ${email}, Senha: ${password}`);
+        navigation.navigate('Home');
+        setEmailError('');
+        setPasswordError('');
+      }
     }
   };
 
@@ -98,7 +120,8 @@ export default function App() {
 
     if (isValid) {
       setUsers([...users, { email, password }]);
-      console.log(`Email: ${email}, Senha: ${password}`);
+      console.log(`CADASTRO: Email: ${email}, Senha: ${password}`);
+      navigation.navigate('Home');
     }
   };
 
@@ -132,5 +155,18 @@ export default function App() {
         </Text>
       </TouchableOpacity>
     </View>
+  );
+}
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

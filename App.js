@@ -1,50 +1,146 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React, { Fragment, useState } from 'react';
+import { Button, Image, StyleSheet, Text, View, TextInput, TouchableOpacity, Linking, ScrollView, Modal } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const styles = StyleSheet.create({
+  scrollView:{
+    gap:10,alignItems:"center",width:"100%"
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 30,
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 30,
-    flexDirection: 'column'
   },
   input: {
     height: 40,
     width: '100%',
-    borderColor: 'gray',
+    borderColor: '#888',
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: 25,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+
   },
-  button: {
+  button: {justifyContent:"center",
     width: '100%',
     backgroundColor: 'black',
     padding: 10,
     borderRadius: 50,
     alignItems: 'center',
-    margin: 10,
+    margin: 1,
+    marginBottom: 10,
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    textAlign: 'center',
+    textDecorationColor: '#fff',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 1,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    margin: 1, // Adiciona margem
+    width: '90%', // Define a largura
+    alignItems: 'center', // Alinha os itens ao centro
+    shadowColor: '#000', // Adiciona sombra
+    shadowOffset: { width: 10, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  header: {
+    height: 60,
+    width: '100%',
+    borderRadius: 60,
+    backgroundColor: '#f8f8f8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 
-
 function HomeScreen() {
+
+  const [users, setUsers] = useState(['pedromartins28', 'camidebem', 'tteodorogustavo', 'dantas15',
+    'diegomarqueszs',"GustavoRFS",
+    'dudaGrossi', 'gZanda', 'katfr', 'lieko0', 'luanShimosaka',
+    'lucaslopesxx', 'notlimneto', 'victorhxo']);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
-    <View style={styles.container}>
-      <Text>Bem vindo!</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.scrollView}>
+      {users.map((user) => (
+        <Card
+          key={user}
+          user={user}
+          onPress={() => {
+            setSelectedUser(user);
+            setModalVisible(true);
+          }}
+          onLinkPress={() => Linking.openURL(`https://github.com/${user}`)}
+        />
+      ))}
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {selectedUser && (
+              <Card
+                user={selectedUser}
+                onPress={() => setModalVisible(false)}
+                onLinkPress={() => Linking.openURL(`https://github.com/${selectedUser}`)}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
-function LoginScreen ({ navigation }) {
+function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -52,6 +148,7 @@ function LoginScreen ({ navigation }) {
   const [users, setUsers] = useState([]);
 
   const handleLogin = () => {
+
     let isValid = true;
 
     if (email === '') {
@@ -126,7 +223,13 @@ function LoginScreen ({ navigation }) {
   };
 
   return (
+
     <View style={styles.container}>
+      <Image
+        style={{ width: 60, height: 60, borderRadius: 25, margin: 20, marginBottom: 50 }}
+        source={{ uri: 'https://github.com/Comp-Junior.png' }}
+      />
+
       {emailError ? <Text style={{ color: 'red', textAlign: 'justify' }}>* {emailError}</Text> : null}
       <TextInput
         style={styles.input}
@@ -134,6 +237,7 @@ function LoginScreen ({ navigation }) {
         value={email}
         placeholder="Email"
         keyboardType="email-address"
+
       />
       {passwordError ? <Text style={{ color: 'red', textAlign: 'justify' }}>* {passwordError}</Text> : null}
       <TextInput
@@ -158,6 +262,26 @@ function LoginScreen ({ navigation }) {
   );
 }
 
+function Card({ user, onPress, onLinkPress }) {
+  return (
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <>
+        <Text>{user}</Text>
+        <Image
+          style={{ width: 300, height: 300, borderRadius: 1, margin: 20 }}
+          source={{ uri: `https://github.com/${user}.png` }}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={onLinkPress}
+        >
+          <Text style={styles.buttonText}> Ver perfil no GitHub</Text>
+        </TouchableOpacity>
+      </>
+    </TouchableOpacity>
+  );
+}
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -165,7 +289,29 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerRight: () => (
+              <TouchableOpacity onPress={() => Linking.openURL('https://github.com/Comp-Junior')}>
+                <Image
+                  style={{ width: 40, height: 40, borderRadius: 25, margin: 20 }}
+                  source={{ uri: 'https://github.com/Comp-Junior.png' }}
+                />
+              </TouchableOpacity>
+
+            ),
+            title: 'GitComp',
+            headerStyle: {
+              backgroundColor: '#091f42',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: '900',
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

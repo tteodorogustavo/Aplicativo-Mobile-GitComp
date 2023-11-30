@@ -4,8 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const styles = StyleSheet.create({
-  scrollView:{
-    gap:10,alignItems:"center",width:"100%"
+  scrollView: {
+    gap: 10, alignItems: "center", width: "100%"
   },
   container: {
     flex: 1,
@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
   },
-  button: {justifyContent:"center",
+  button: {
+    justifyContent: "center",
     width: '100%',
     backgroundColor: 'black',
     padding: 10,
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
 function HomeScreen() {
 
   const [users, setUsers] = useState(['pedromartins28', 'camidebem', 'tteodorogustavo', 'dantas15',
-    'diegomarqueszs',"GustavoRFS",
+    'diegomarqueszs', "GustavoRFS",
     'dudaGrossi', 'gZanda', 'katfr', 'lieko0', 'luanShimosaka',
     'lucaslopesxx', 'notlimneto', 'victorhxo']);
   const [selectedUser, setSelectedUser] = useState(null);
